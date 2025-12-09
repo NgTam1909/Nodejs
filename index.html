@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Info - Đơn Giản</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .container {
+            background: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e7f3fa;
+            border-radius: 8px;
+        }
+        .info-item {
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+        .value {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Thông Tin IP Của Bạn</h1>
+
+    <div id="ipInfo" class="info-box">
+        <!-- Thông tin sẽ hiển thị ở đây -->
+    </div>
+</div>
+
+<script>
+    async function getIPInfo() {
+        try {
+            const response = await fetch('/api/ip-info');
+            const data = await response.json();
+
+            document.getElementById('ipInfo').innerHTML = `
+                    <div class="info-item">
+                        <span class="label">IP:</span>
+                        <span class="value">${data.query || data.ip}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Vị trí:</span>
+                        <span class="value">${data.city}, ${data.country}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">ISP:</span>
+                        <span class="value">${data.isp}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Tọa độ:</span>
+                        <span class="value">${data.lat}, ${data.lon}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Múi giờ:</span>
+                        <span class="value">${data.timezone}</span>
+                    </div>
+                `;
+        } catch (error) {
+            document.getElementById('ipInfo').innerHTML =
+                '<p style="color: red;">Lỗi khi lấy thông tin IP</p>';
+        }
+    }
+
+    // Tự động chạy khi trang tải
+    window.onload = getIPInfo;
+</script>
+</body>
+</html>
