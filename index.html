@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự báo thời tiết</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .container {
+            background: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .current-weather {
+            margin: 20px 0;
+            padding: 20px;
+            background: #e7f3fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .temp {
+            font-size: 48px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+        .location {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .forecast-box {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .forecast-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .forecast {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+        .forecast-day {
+            flex: 1;
+            padding: 10px;
+        }
+        .forecast-date {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .forecast-max {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .forecast-min {
+            color: #3498db;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Dự báo thời tiết</h1>
+
+    <div id="location" class="location">Đang xác định vị trí...</div>
+
+    <div id="currentWeather" class="current-weather">
+        <div class="temp" id="temperature">--°C</div>
+        <div>Gió: <span id="wind">-- km/h</span></div>
+    </div>
+
+    <div class="forecast-box">
+        <div class="forecast-title">Dự báo 5 ngày tới</div>
+        <div id="forecast" class="forecast">
+            <!-- Dự báo sẽ được thêm ở đây -->
+        </div>
+    </div>
+
+    <button onclick="getWeather()">Cập nhật thời tiết</button>
+</div>
+
+<script>
+    async function getWeather() {
+        try {
+            const response = await fetch('/api/weather');
+            const data = await response.json();
+
+            // Hiển thị vị trí
+            document.getElementById('location').textContent =
+                `${data.location}, ${data.country}`;
+
+            // Hiển thị thời tiết hiện tại
+            document.getElementById('temperature').textContent =
+                `${data.current.temperature}°C`;
+            document.getElementById('wind').textContent =
+                `${data.current.windspeed} km/h`;
+
+            // Hiển thị dự báo
+            const forecastEl = document.getElementById('forecast');
+            forecastEl.innerHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                forecastEl.innerHTML += `
+                    <div class="forecast-day">
+                        <div class="forecast-date">${data.forecast.dates[i]}</div>
+                        <div class="forecast-max">${data.forecast.max_temp[i]}°</div>
+                        <div class="forecast-min">${data.forecast.min_temp[i]}°</div>
+                    </div>
+                `;
+            }
+
+        } catch (error) {
+            alert('Lỗi khi lấy thông tin thời tiết');
+        }
+    }
+
+    // Tự động chạy khi trang tải
+    window.onload = getWeather;
+</script>
+</body>
+</html>
